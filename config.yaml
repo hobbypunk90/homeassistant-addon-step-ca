@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Step CA
-version: "0.28.3-1"
+version: "0.28.3-2"
 slug: step-ca
 description: step-ca is an online Certificate Authority (CA) for secure, automated X.509 and SSH certificate management.
 url: "https://github.com/hobbypunk90/homeassistant-addon-step-ca"
@@ -11,6 +11,7 @@ arch:
   - amd64
   - i386
 init: false
+hassio_api: true
 map:
   - addon_config:rw
   - ssl:rw
