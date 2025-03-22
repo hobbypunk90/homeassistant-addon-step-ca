@@ -1,0 +1,10 @@
+configuration:
+  password:
+    name: Passwort
+    description: Passwort zum Entschlüsseln der CA Daten
+  debug:
+    name: Debug
+    description: Schalter um Debug Meldungen einzuschalten
+  root_ca_path:
+    name: Root CA Pfad
+    description: Pfad in dem die Root CA Datei abgelegt werden soll

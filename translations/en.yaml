@@ -1,0 +1,10 @@
+configuration:
+  password:
+    name: Password
+    description: Password to encrypt the CA data
+  debug:
+    name: Debug
+    description: Flag to enable debug messages
+  root_ca_path:
+    name: Root CA path
+    description: Path to save the root ca.

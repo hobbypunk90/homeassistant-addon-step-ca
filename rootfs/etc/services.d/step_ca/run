@@ -1,0 +1,68 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the example service
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Add your code here
+
+# Declare variables
+declare password
+declare debug
+declare root_ca_path
+
+## Get the 'message' key from the user config options.
+password=$(bashio::config 'password')
+debug=$(bashio::config 'debug')
+root_ca_path=$(bashio::config 'root_ca_path')
+
+mkdir -p /config/step
+if [ -d /root/.step ]; then 
+  rm -fr /root/.step
+fi
+
+ln -s /config/step /root/.step
+
+echo "Debug: ${debug}"
+
+if [ "${debug}" = "true" ]; then
+  export STEPDEBUG=1
+fi
+
+echo ${password} > /data/password_file
+
+if [ ! -f /root/.step/config/ca.json ] || [ "${password}" != "$(cat /data/password_file)"]; then
+  rm -fr /config/step/*
+  bashio::log.info 'Initialize step ca ...'
+
+  hostname=$(bashio::host.hostname)
+  network_info=$(bashio::network)
+  ip_addresses=$(echo ${network_info} | jq '[ [.interfaces[]] | .[].ipv4.address[] ] | join(",")' | tr -d '"')
+
+  bashio::log.info $(step ca init --name "${hostname}" \
+                                  --dns "$(hostname),${hostname},${ip_addresses}" \
+                                  --provisioner "homeassistant@${hostname}" \
+                                  --address ":9000" \
+                                  --password-file /data/password_file >/dev/null)
+  
+  step-ca --password-file /data/password_file /root/.step/config/ca.json >/dev/null &
+  sleep 2
+  bashio::log.info $(step ca token --password-file /data/password_file "${hostname}" >/config/token)
+  killall step-ca
+
+  bashio::log.info $(step ca provisioner add homeassistant --type ACME)
+fi
+
+fingerprint=$(cat /config/step/config/defaults.json | grep fingerprint | sed 's/.*"fingerprint": "//; s/",//')
+bashio::log.info "Root fingerprint: ${fingerprint}"
+bashio::log.info "Root token: $(cat /config/token)"
+
+bashio::log.info "Root certificate:"
+cat /config/step/certs/root_ca.crt
+cp  /config/step/certs/root_ca.crt ${root_ca_path}
+
+bashio::log.info "Intermediate certificate:"
+cat /config/step/certs/intermediate_ca.crt
+
+bashio::log.info 'Start step ca ...'
+step-ca --password-file /data/password_file /root/.step/config/ca.json
