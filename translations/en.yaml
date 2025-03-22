@@ -8,3 +8,5 @@ configuration:
   root_ca_path:
     name: Root CA path
     description: Path to save the root ca.
+network:
+  9000/tcp: Authority port for certificate generation

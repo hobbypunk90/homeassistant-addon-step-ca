@@ -8,3 +8,5 @@ configuration:
   root_ca_path:
     name: Root CA Pfad
     description: Pfad in dem die Root CA Datei abgelegt werden soll
+network:
+  9000/tcp: Authority port zur Generierung von Zertifikaten
