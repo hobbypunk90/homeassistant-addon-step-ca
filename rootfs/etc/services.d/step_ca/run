@@ -31,7 +31,7 @@ fi
 
 echo ${password} > /data/password_file
 
-if [ ! -f /root/.step/config/ca.json ] || [ "${password}" != "$(cat /data/password_file)"]; then
+if [ ! -f /root/.step/config/ca.json ] || [ "${password}" != "$(cat /data/password_file)" ]; then
   rm -fr /config/step/*
   bashio::log.info 'Initialize step ca ...'
 
