@@ -11,4 +11,4 @@ labels:
   org.opencontainers.image.source: "https://github.com/hobbypunk90/homeassistant-addon-step-ca"
   org.opencontainers.image.licenses: "Apache License 2.0"
 args:
-  STEP_CA_VERSION: "0.28.3"
+  STEP_CA_VERSION: "0.29.0"
